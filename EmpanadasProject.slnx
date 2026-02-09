@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="EmpanadasProject.Data/EmpanadasProject.Data.csproj" />
+  <Project Path="EmpanadasProject.Test/EmpanadasProject.Test.csproj" />
+  <Project Path="EmpanadasProject.Web/EmpanadasProject.Web.csproj" />
+</Solution>
