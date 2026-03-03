@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EmpanadasProject.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmpanadasProject.Data.Contexts
 {
@@ -7,5 +8,7 @@ namespace EmpanadasProject.Data.Contexts
         public EmpanadasContext(DbContextOptions<EmpanadasContext> options) : base(options)
         {            
         }
+
+        public DbSet<Usuarios> Usuarios { get; set; }
     }
 }

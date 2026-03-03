@@ -6,16 +6,16 @@ namespace EmpanadasProject.Web.Controllers
     public class LoginController1 : Controller
     {
 
-        private static List<LoginDto> _usuarios = new List<LoginDto>
+        private static List<UsuarioDTO> _usuarios = new List<UsuarioDTO>
         {
-            new LoginDto { Usuarios = "admin", Contraseña = "1234" },
-            new LoginDto { Usuarios = "user", Contraseña = "pass" }
+            new UsuarioDTO { Email = "admin", Password = "1234" },
+            new UsuarioDTO { Email = "user", Password = "pass" }
         };
 
         [HttpGet]
         public IActionResult Login(string usuarios, string contraseña)
         {
-            var encontrado = _usuarios.Any(u => u.Usuarios == usuarios && u.Contraseña == contraseña);
+            var encontrado = _usuarios.Any(u => u.Email == usuarios && u.Password == contraseña);
 
             if (encontrado)
                 return Content("Usuario Logueado Satisfactoriamente");
@@ -24,7 +24,7 @@ namespace EmpanadasProject.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(LoginDto dto)
+        public IActionResult Register(UsuarioDTO dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest("Datos inválidos");
