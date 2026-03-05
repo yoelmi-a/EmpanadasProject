@@ -1,6 +1,4 @@
-﻿
-
-using EmpanadasProject.Data.Entities;
+﻿using EmpanadasProject.Data.Entities.Usuario;
 using EmpanadasProject.Data.OperationResult;
 
 namespace EmpanadasProject.Data.Interfaces

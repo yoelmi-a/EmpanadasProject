@@ -1,5 +1,5 @@
 ﻿using EmpanadasProject.Data.Contexts;
-using EmpanadasProject.Data.Entities;
+using EmpanadasProject.Data.Entities.Usuario;
 using EmpanadasProject.Data.Interfaces;
 using EmpanadasProject.Data.OperationResult;
 
