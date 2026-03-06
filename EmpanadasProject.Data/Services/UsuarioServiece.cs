@@ -1,6 +1,6 @@
 ﻿using EmpanadasProject.Data.Contexts;
 using EmpanadasProject.Data.Entities.Usuario;
-using EmpanadasProject.Data.Interfaces;
+using EmpanadasProject.Data.Interfaces.Usuario;
 using EmpanadasProject.Data.OperationResult;
 using Microsoft.EntityFrameworkCore;
 
@@ -99,6 +99,7 @@ namespace EmpanadasProject.Data.Repositories
                     result.Success = false;
                     result.Message = "Usuario no encontrado.";
                     result.Data = null;
+                    return result;
                 }
                 result.Success = true;
                 result.Message = "Usuario obtenido exitosamente.";

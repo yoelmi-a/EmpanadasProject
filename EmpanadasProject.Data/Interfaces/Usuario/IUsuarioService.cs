@@ -1,7 +1,7 @@
 ﻿using EmpanadasProject.Data.Entities.Usuario;
 using EmpanadasProject.Data.OperationResult;
 
-namespace EmpanadasProject.Data.Interfaces
+namespace EmpanadasProject.Data.Interfaces.Usuario
 {
     public interface IUsuarioService
     {
