@@ -21,8 +21,8 @@ namespace EmpanadasProject.Data.Repositories
             
             try
             {
-                usuario.FechaDeRegistro = DateTime.Now;
-                _context.Usuarios.Add(usuario);
+               usuario.FechaDeRegistro = DateTime.Now;
+               _context.Usuarios.Add(usuario);
                await _context.SaveChangesAsync();
 
 
@@ -38,7 +38,32 @@ namespace EmpanadasProject.Data.Repositories
             }
             return result;
         }
+        public async Task<OperationResult<Usuarios>> GetUsuarioByIdAsync(int id)
+        {
+            OperationResult<Usuarios> result = new OperationResult<Usuarios>(); 
+            try
+            {
+                var usuario =  await _context.Usuarios.FindAsync(id);
 
+                if (usuario == null)
+                {
+                    result.Success = false;
+                    result.Message = "Usuario no encontrado.";
+                    result.Data = null;
+                    return result;
+                }
+                result.Success = true;
+                result.Message = "Usuario obtenido exitosamente.";
+                result.Data = usuario;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = $"Error al obtener el usuario: {ex.Message}";
+                result.Data = null;
+            }
+            return result;
+        }
         public async Task<OperationResult<Usuarios>> DeleteUsuarioAsync(int id)
         {
             OperationResult<Usuarios> result = new OperationResult<Usuarios>();
@@ -68,7 +93,6 @@ namespace EmpanadasProject.Data.Repositories
             }
             return result;
         }
-
         public async Task<OperationResult<IEnumerable<Usuarios>>> GetAllUsuariosAsync()
         {
             OperationResult<IEnumerable<Usuarios>> result = new OperationResult<IEnumerable<Usuarios>>();
@@ -87,34 +111,6 @@ namespace EmpanadasProject.Data.Repositories
             }
             return  result;
         }
-
-        public async Task<OperationResult<Usuarios>> GetUsuarioByIdAsync(int id)
-        {
-            OperationResult<Usuarios> result = new OperationResult<Usuarios>(); 
-            try
-            {
-                var usuario =  await _context.Usuarios.FindAsync(id);
-                if (usuario == null)
-                {
-                    result.Success = false;
-                    result.Message = "Usuario no encontrado.";
-                    result.Data = null;
-                    return result;
-                }
-                result.Success = true;
-                result.Message = "Usuario obtenido exitosamente.";
-                result.Data = usuario;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = $"Error al obtener el usuario: {ex.Message}";
-                result.Data = null;
-            }
-            return result;
-        }
-
-
         public async Task<OperationResult<IEnumerable<Usuarios>>> GetUsuariosByEmailAsync(string Email)
         {
             OperationResult<IEnumerable<Usuarios>> result = new OperationResult<IEnumerable<Usuarios>>();
@@ -140,7 +136,6 @@ namespace EmpanadasProject.Data.Repositories
             }
             return result;
         }
-
         public async Task<OperationResult<Usuarios>> Login(Usuarios usuario)
         {
             OperationResult<Usuarios> result = new OperationResult<Usuarios>();
@@ -165,7 +160,6 @@ namespace EmpanadasProject.Data.Repositories
             }
             return result;
         }
-
         public async Task<OperationResult<Usuarios>> UpdateUsuarioAsync(Usuarios usuario)
         {
             OperationResult<Usuarios> result = new OperationResult<Usuarios>();

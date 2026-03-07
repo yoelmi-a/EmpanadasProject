@@ -30,7 +30,8 @@ namespace EmpanadasProject.Web.Validations.Usuario
                 .GreaterThan(0);
 
             RuleFor(x => x.FechaDeRegistro)
-                .LessThanOrEqualTo(DateTime.Now);
+                .Must(fecha => fecha != default)
+                .GreaterThanOrEqualTo(DateTime.Now);
         }
     }
 }
