@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="10.3.5" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\EmpanadasProject.Data\EmpanadasProject.Data.csproj" />
   </ItemGroup>
 

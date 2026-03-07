@@ -1,24 +1,23 @@
 ﻿using EmpanadasProject.Data.Entities.Usuario;
 using EmpanadasProject.Data.Interfaces.Usuario;
-
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace EmpanadasProject.Web.Controllers.Usuario
 {
-    public class UsuarioController : Controller
+    public class MetodoPagoController : Controller
     {
-        private readonly IUsuarioService _service;
+        private readonly IMetodoPagoService _service;
 
-        public UsuarioController(IUsuarioService service)
+        public MetodoPagoController(IMetodoPagoService service)
         {
             _service = service;
         }
 
-        // GET: UsuarioController
+        // GET: MetodoPagoController
         public async Task<ActionResult> Index()
         {
-
-            var result = await _service.GetAllUsuariosAsync();
+            var result = await _service.GetAllMetodoPago();
 
             if (!result.Success)
             {
@@ -29,11 +28,10 @@ namespace EmpanadasProject.Web.Controllers.Usuario
             return View(result.Data);
         }
 
-        // GET: UsuarioController/Details/5
+        // GET: MetodoPagoController/Details/5
         public async Task<ActionResult> Details(int id)
         {
-
-            var result = await _service.GetUsuarioByIdAsync(id);
+            var result = await _service.GetMetodoPagoByIdAsync(id);
 
             if (!result.Success)
             {
@@ -44,32 +42,20 @@ namespace EmpanadasProject.Web.Controllers.Usuario
             return View(result.Data);
         }
 
-        // GET: UsuarioController/UsuarioByEmail/5
-        public async Task<ActionResult> UsuarioByEmail(string email)
-        {
-            var result = await _service.GetUsuariosByEmailAsync(email);
-            if (!result.Success)
-            {
-                ViewBag.ErrorMessage = result.Message;
-                return View();
-            }
-            return View(result.Data);
-        }
-
-        // GET: UsuarioController/Create
+        // GET: MetodoPagoController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: UsuarioController/Create
+        // POST: MetodoPagoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Usuarios usuario)
+        public async Task<ActionResult> Create(MetodoPago metodoPago)
         {
             try
             {
-                var result = await _service.AddUsuarioAsync(usuario);
+                var result = await _service.AddMetodoPagoAsync(metodoPago);
 
                 if (!result.Success)
                 {
@@ -85,11 +71,10 @@ namespace EmpanadasProject.Web.Controllers.Usuario
             }
         }
 
-        // GET: UsuarioController/Edit/5
+        // GET: MetodoPagoController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-
-            var result = await _service.GetUsuarioByIdAsync(id);
+            var result = await _service.GetMetodoPagoByIdAsync(id);
 
             if (!result.Success)
             {
@@ -100,15 +85,14 @@ namespace EmpanadasProject.Web.Controllers.Usuario
             return View(result.Data);
         }
 
-        // POST: UsuarioController/Edit/5
+        // POST: MetodoPagoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(Usuarios usuario)
+        public async Task<ActionResult> Edit(MetodoPago metodoPago)
         {
             try
             {
-
-                var result = await _service.UpdateUsuarioAsync(usuario);
+                var result = await _service.UpdateMetodoPago(metodoPago);
 
                 if (!result.Success)
                 {
@@ -124,10 +108,10 @@ namespace EmpanadasProject.Web.Controllers.Usuario
             }
         }
 
-        // GET: UsuarioController/Delete/5
+        // GET: MetodoPagoController/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var result = await _service.GetUsuarioByIdAsync(id);
+            var result = await _service.GetMetodoPagoByIdAsync(id);
 
             if (!result.Success)
             {
@@ -135,50 +119,30 @@ namespace EmpanadasProject.Web.Controllers.Usuario
                 return View();
             }
 
-            return View(result.Data);
+            return View();
         }
 
-        // POST: UsuarioController/Delete/5
+        // POST: MetodoPagoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Desactivar(int id)
         {
             try
             {
-                var result = await _service.DeleteUsuarioAsync(id);
+                var result = await _service.DeleteMetodoPago(id);
 
                 if (!result.Success)
                 {
                     ViewBag.ErrorMessage = result.Message;
                     return View();
                 }
+
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
                 return View();
             }
-        }
-
-        // GET: Usuario/Login
-        public ActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(Usuarios usuarios)
-        {
-            var result = await _service.Login(usuarios);
-
-            if (!result.Success)
-            {
-                ViewBag.ErrorMessage = result.Message;
-                return View();
-            }
-
-            return RedirectToAction("Index", "Home");
         }
     }
 }

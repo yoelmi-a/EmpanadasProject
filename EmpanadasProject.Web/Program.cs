@@ -2,6 +2,9 @@ using EmpanadasProject.Data.Contexts;
 using EmpanadasProject.Data.Interfaces.Usuario;
 using EmpanadasProject.Data.Repositories;
 using EmpanadasProject.Data.Services;
+using EmpanadasProject.Web.Validations.Usuario;
+
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<EmpanadasContext>(options => options.UseInMemoryDatabase("EmpanadasDb"));
+
+builder.Services.AddControllersWithViews()
+    .AddFluentValidation(fv =>
+        fv.RegisterValidatorsFromAssemblyContaining<UsuarioValidator>());
 
 builder.Services.AddScoped<IUsuarioService, UsuarioServiece>();
 builder.Services.AddScoped<IRolUsuarioService, RolUsuarioService>();
