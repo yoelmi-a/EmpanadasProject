@@ -111,14 +111,14 @@ namespace EmpanadasProject.Data.Repositories
             }
             return  result;
         }
-        public async Task<OperationResult<IEnumerable<Usuarios>>> GetUsuariosByEmailAsync(string Email)
+        public async Task<OperationResult<Usuarios>> GetUsuariosByEmailAsync(string Email)
         {
-            OperationResult<IEnumerable<Usuarios>> result = new OperationResult<IEnumerable<Usuarios>>();
+            OperationResult<Usuarios> result = new OperationResult<Usuarios>();
 
             try
             {
-                var usuarios = await _context.Usuarios.Where(u => u.Email == Email).ToListAsync();
-                if (usuarios == null || usuarios.Count == 0)
+                var usuarios = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == Email);
+                if (usuarios == null)
                 {
                     result.Success = false;
                     result.Message = "No se encontraron usuarios con ese email.";
