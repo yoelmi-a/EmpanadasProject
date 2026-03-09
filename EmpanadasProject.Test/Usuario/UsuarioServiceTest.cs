@@ -291,6 +291,7 @@ namespace EmpanadasProject.Test.Usuario
             Assert.False(result.Success);
         }
 
+        [Fact]
         public async Task GetUsuariosByEmailAsync_EmailDuplicadoDebeRetornarTrue()
         {
             var factory = new DbEmpanadasContext();
