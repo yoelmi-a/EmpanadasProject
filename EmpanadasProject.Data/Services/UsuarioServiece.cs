@@ -123,6 +123,8 @@ namespace EmpanadasProject.Data.Repositories
                     result.Success = false;
                     result.Message = "No se encontraron usuarios con ese email.";
                     result.Data = null;
+
+                    return result;
                 }
                 result.Success = true;
                 result.Message = "Usuarios obtenidos exitosamente.";
