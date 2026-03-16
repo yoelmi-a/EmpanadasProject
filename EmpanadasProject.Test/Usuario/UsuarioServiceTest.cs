@@ -335,7 +335,7 @@ namespace EmpanadasProject.Test.Usuario
 
             context.Usuarios.Add(new Usuarios
             {
-                Email = "correo@email.com",
+                Email = "CORREO@email.com",
                 Nombre = "Test",
                 Contraseña = "12345678",
                 Telefono = "809",
