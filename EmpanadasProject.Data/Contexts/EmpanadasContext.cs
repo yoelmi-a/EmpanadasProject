@@ -1,4 +1,6 @@
 ﻿using EmpanadasProject.Data.Entities;
+﻿using EmpanadasProject.Data.Entities.Pedidos;
+using EmpanadasProject.Data.Entities.Productos;
 using EmpanadasProject.Data.Entities.Usuario;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,5 +29,8 @@ namespace EmpanadasProject.Data.Contexts
             modelBuilder.Entity<MetodoDePagoEnNegocio>()
                 .HasKey(m => new { m.MetodoId, m.NegocioId });
         }
+        public DbSet<Producto> Productos { get; set; }
+        public DbSet<Pedido> Pedidos { get; set; }
+        public DbSet<ProductoEnPedido> ProductoEnPedidos { get; set; }
     }
 }
