@@ -1,6 +1,6 @@
-﻿using EmpanadasProject.Data.Entities.Usuario;
 using EmpanadasProject.Data.Interfaces.Usuario;
-
+using EmpanadasProject.Data.Base;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmpanadasProject.Web.Controllers.Usuario
@@ -17,43 +17,41 @@ namespace EmpanadasProject.Web.Controllers.Usuario
         // GET: UsuarioController
         public async Task<ActionResult> Index()
         {
-
             var result = await _service.GetAllUsuariosAsync();
 
-            if (!result.Success)
+            if (!result.EsExitoso)
             {
-                ViewBag.ErrorMessage = result.Message;
+                ViewBag.ErrorMessage = result.MensajeError;
                 return View();
             }
 
-            return View(result.Data);
+            return View(result.Valor);
         }
 
         // GET: UsuarioController/Details/5
-        public async Task<ActionResult> Details(int id)
+        public async Task<ActionResult> Details(string id)
         {
-
             var result = await _service.GetUsuarioByIdAsync(id);
 
-            if (!result.Success)
+            if (!result.EsExitoso)
             {
-                ViewBag.ErrorMessage = result.Message;
+                ViewBag.ErrorMessage = result.MensajeError;
                 return View();
             }
 
-            return View(result.Data);
+            return View(result.Valor);
         }
 
         // GET: UsuarioController/UsuarioByEmail/5
         public async Task<ActionResult> UsuarioByEmail(string email)
         {
             var result = await _service.GetUsuariosByEmailAsync(email);
-            if (!result.Success)
+            if (!result.EsExitoso)
             {
-                ViewBag.ErrorMessage = result.Message;
+                ViewBag.ErrorMessage = result.MensajeError;
                 return View();
             }
-            return View(result.Data);
+            return View(result.Valor);
         }
 
         // GET: UsuarioController/Create
@@ -65,15 +63,15 @@ namespace EmpanadasProject.Web.Controllers.Usuario
         // POST: UsuarioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Usuarios usuario)
+        public async Task<ActionResult> Create(IdentityUser usuario, string password)
         {
             try
             {
-                var result = await _service.AddUsuarioAsync(usuario);
+                var result = await _service.AddUsuarioAsync(usuario, password);
 
-                if (!result.Success)
+                if (!result.EsExitoso)
                 {
-                    ViewBag.ErrorMessage = result.Message;
+                    ViewBag.ErrorMessage = result.MensajeError;
                     return View();
                 }
 
@@ -86,33 +84,31 @@ namespace EmpanadasProject.Web.Controllers.Usuario
         }
 
         // GET: UsuarioController/Edit/5
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(string id)
         {
-
             var result = await _service.GetUsuarioByIdAsync(id);
 
-            if (!result.Success)
+            if (!result.EsExitoso)
             {
-                ViewBag.ErrorMessage = result.Message;
+                ViewBag.ErrorMessage = result.MensajeError;
                 return View();
             }
 
-            return View(result.Data);
+            return View(result.Valor);
         }
 
         // POST: UsuarioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(Usuarios usuario)
+        public async Task<ActionResult> Edit(IdentityUser usuario)
         {
             try
             {
-
                 var result = await _service.UpdateUsuarioAsync(usuario);
 
-                if (!result.Success)
+                if (!result.EsExitoso)
                 {
-                    ViewBag.ErrorMessage = result.Message;
+                    ViewBag.ErrorMessage = result.MensajeError;
                     return View();
                 }
 
@@ -125,31 +121,31 @@ namespace EmpanadasProject.Web.Controllers.Usuario
         }
 
         // GET: UsuarioController/Delete/5
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
             var result = await _service.GetUsuarioByIdAsync(id);
 
-            if (!result.Success)
+            if (!result.EsExitoso)
             {
-                ViewBag.ErrorMessage = result.Message;
+                ViewBag.ErrorMessage = result.MensajeError;
                 return View();
             }
 
-            return View(result.Data);
+            return View(result.Valor);
         }
 
         // POST: UsuarioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Desactivar(int id)
+        public async Task<ActionResult> ConfirmarEliminar(string id)
         {
             try
             {
                 var result = await _service.DeleteUsuarioAsync(id);
 
-                if (!result.Success)
+                if (!result.EsExitoso)
                 {
-                    ViewBag.ErrorMessage = result.Message;
+                    ViewBag.ErrorMessage = result.MensajeError;
                     return View();
                 }
                 return RedirectToAction(nameof(Index));
@@ -158,27 +154,6 @@ namespace EmpanadasProject.Web.Controllers.Usuario
             {
                 return View();
             }
-        }
-
-        // GET: Usuario/Login
-        public ActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(Usuarios usuarios)
-        {
-            var result = await _service.Login(usuarios);
-
-            if (!result.Success)
-            {
-                ViewBag.ErrorMessage = result.Message;
-                return View();
-            }
-
-            return RedirectToAction("Index", "Home");
         }
     }
 }

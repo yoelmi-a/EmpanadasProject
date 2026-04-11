@@ -1,142 +1,101 @@
-﻿using EmpanadasProject.Data.Contexts;
-using EmpanadasProject.Data.Entities.Usuario;
+using EmpanadasProject.Data.Context;
+using EmpanadasProject.Data.Entities;
 using EmpanadasProject.Data.Interfaces.Usuario;
-using EmpanadasProject.Data.OperationResult;
+using EmpanadasProject.Data.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmpanadasProject.Data.Services
 {
     public class MetodoPagoService : IMetodoPagoService
     {
-        private readonly EmpanadasContext _context;
+        private readonly AppDbContext _context;
 
-        public MetodoPagoService(EmpanadasContext context)
+        public MetodoPagoService(AppDbContext context)
         {
             _context = context;
         }
 
         public async Task<OperationResult<MetodoPago>> AddMetodoPagoAsync(MetodoPago metodoPago)
         {
-            OperationResult<MetodoPago> result = new OperationResult<MetodoPago>();
-
             try
             {
-                _context.MetodoPagos.Add(metodoPago);
+                _context.Set<MetodoPago>().Add(metodoPago);
                 await _context.SaveChangesAsync();
-
-                result.Success = true;
-                result.Message = "Metodo de Pago agregado exitosamente.";
-                result.Data = metodoPago;
+                return OperationResult<MetodoPago>.Exitoso(metodoPago);
             }
             catch (Exception ex) 
             {
-                result.Success = false;
-                result.Message = $"Error agregando el metodo de pago: {ex.Message}";
-                result.Data = null;
+                return OperationResult<MetodoPago>.Fallido($"Error agregando el método de pago: {ex.Message}");
             }
-            return result;
         }
 
         public async Task<OperationResult<MetodoPago>> DeleteMetodoPago(int Id)
         {
-            OperationResult<MetodoPago> result = new OperationResult<MetodoPago>();
             try
             {
-                var metodoPago = await _context.MetodoPagos.FindAsync(Id);
+                var metodoPago = await _context.Set<MetodoPago>().FindAsync(Id);
                 if (metodoPago == null)
                 {
-                    result.Success = false;
-                    result.Message = "Metodo de Pago no encontrado.";
-                    result.Data = null;
-                    return result;
+                    return OperationResult<MetodoPago>.Fallido("Método de pago no encontrado.");
                 }
-                _context.MetodoPagos.Remove(metodoPago);
+                _context.Set<MetodoPago>().Remove(metodoPago);
                 await _context.SaveChangesAsync();
-                result.Success = true;
-                result.Message = "Metodo de Pago eliminado exitosamente.";
-                result.Data = metodoPago;
+                return OperationResult<MetodoPago>.Exitoso(metodoPago);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error eliminando el metodo de pago: {ex.Message}";
-                result.Data = null;
+                return OperationResult<MetodoPago>.Fallido($"Error eliminando el método de pago: {ex.Message}");
             }
-            return result;
         }
 
         public async Task<OperationResult<IEnumerable<MetodoPago>>> GetAllMetodoPago()
         {
-            OperationResult<IEnumerable<MetodoPago>> result = new OperationResult<IEnumerable<MetodoPago>>();
             try
             {
-                var metodoPagos = await _context.MetodoPagos.ToListAsync();
-                result.Success = true;
-                result.Message = "Metodos de Pago obtenidos exitosamente.";
-                result.Data = metodoPagos;
+                var metodoPagos = await _context.Set<MetodoPago>().ToListAsync();
+                return OperationResult<IEnumerable<MetodoPago>>.Exitoso(metodoPagos);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error obteniendo los metodos de pago: {ex.Message}";
-                result.Data = null;
+                return OperationResult<IEnumerable<MetodoPago>>.Fallido($"Error obteniendo los métodos de pago: {ex.Message}");
             }
-            return result;
         }
 
         public async Task<OperationResult<MetodoPago>> GetMetodoPagoByIdAsync(int Id)
         {
-            OperationResult<MetodoPago> result = new OperationResult<MetodoPago>();
             try
             {
-                var metodoPago = await _context.MetodoPagos.FindAsync(Id);
+                var metodoPago = await _context.Set<MetodoPago>().FindAsync(Id);
                 if (metodoPago == null)
                 {
-                    result.Success = false;
-                    result.Message = "Metodo de Pago no encontrado.";
-                    result.Data = null;
-                    return result;
+                    return OperationResult<MetodoPago>.Fallido("Método de pago no encontrado.");
                 }
-                result.Success = true;
-                result.Message = "Metodo de Pago obtenido exitosamente.";
-                result.Data = metodoPago;
+                return OperationResult<MetodoPago>.Exitoso(metodoPago);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error obteniendo el metodo de pago: {ex.Message}";
-                result.Data = null;
+                return OperationResult<MetodoPago>.Fallido($"Error obteniendo el método de pago: {ex.Message}");
             }
-            return result;
         }
 
         public async Task<OperationResult<MetodoPago>> UpdateMetodoPago(MetodoPago metodoPago)
         {
-            OperationResult<MetodoPago> result = new OperationResult<MetodoPago>();
             try
             {
-                var existingMetodoPago = await _context.MetodoPagos.FindAsync(metodoPago.Id);
+                var existingMetodoPago = await _context.Set<MetodoPago>().FindAsync(metodoPago.Id);
                 if (existingMetodoPago == null)
                 {
-                    result.Success = false;
-                    result.Message = "Metodo de Pago no encontrado.";
-                    result.Data = null;
-                    return result;
+                    return OperationResult<MetodoPago>.Fallido("Método de pago no encontrado.");
                 }
                 existingMetodoPago.Nombre = metodoPago.Nombre;
-                _context.MetodoPagos.Update(existingMetodoPago);
+                _context.Set<MetodoPago>().Update(existingMetodoPago);
                 await _context.SaveChangesAsync();
-                result.Success = true;
-                result.Message = "Metodo de Pago actualizado exitosamente.";
-                result.Data = existingMetodoPago;
+                return OperationResult<MetodoPago>.Exitoso(existingMetodoPago);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error actualizando el metodo de pago: {ex.Message}";
-                result.Data = null;
+                return OperationResult<MetodoPago>.Fallido($"Error actualizando el método de pago: {ex.Message}");
             }
-            return result;
         }
     }
 }

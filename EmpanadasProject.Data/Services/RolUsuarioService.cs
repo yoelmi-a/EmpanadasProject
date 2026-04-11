@@ -1,156 +1,114 @@
-﻿
-
-using EmpanadasProject.Data.Contexts;
-using EmpanadasProject.Data.Entities.Usuario;
 using EmpanadasProject.Data.Interfaces.Usuario;
-using EmpanadasProject.Data.OperationResult;
+using EmpanadasProject.Data.Base;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmpanadasProject.Data.Services
 {
     public class RolUsuarioService : IRolUsuarioService
     {
-        private readonly EmpanadasContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public RolUsuarioService(EmpanadasContext context)
+        public RolUsuarioService(RoleManager<IdentityRole> roleManager)
         {
-            _context = context;
+            _roleManager = roleManager;
         }
 
-        public async Task<OperationResult<RolUsuario>> AddRolUsuarioAsync(RolUsuario rolUsuario)
+        public async Task<OperationResult<IdentityRole>> AddRolUsuarioAsync(IdentityRole rolUsuario)
         {
-            OperationResult<RolUsuario> result = new OperationResult<RolUsuario>();
-
             try
             {
-                _context.Add(rolUsuario);
-                await _context.SaveChangesAsync();
-
-                result.Success = true;
-                result.Message = "Rol del Usuario agregado exitosamente.";
-                result.Data = rolUsuario;
+                var result = await _roleManager.CreateAsync(rolUsuario);
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    return OperationResult<IdentityRole>.Fallido($"Error al agregar el rol: {errors}");
+                }
+                return OperationResult<IdentityRole>.Exitoso(rolUsuario);
             }
             catch (Exception ex) 
             {
-                result.Success = false;
-                result.Message = $"Error al agregar el Rol del Usuario: {ex.Message}";
-                result.Data = null;
+                return OperationResult<IdentityRole>.Fallido($"Error al agregar el rol: {ex.Message}");
             }
-            return result;
         }
 
-        public async Task<OperationResult<RolUsuario>> DeleteRolUsuarioAsync(int id)
+        public async Task<OperationResult<IdentityRole>> DeleteRolUsuarioAsync(string id)
         {
-            OperationResult<RolUsuario> result = new OperationResult<RolUsuario>();
-
             try
             {
-                var RolUsuario = await _context.RolUsuarios.FindAsync(id);
-
-                if (RolUsuario == null) 
+                var role = await _roleManager.FindByIdAsync(id);
+                if (role == null) 
                 {
-                    result.Success = false;
-                    result.Message = "Rol de Usuario no encontrado.";
-                    result.Data = null;
-                    return result;
+                    return OperationResult<IdentityRole>.Fallido("Rol no encontrado.");
                 }
 
-                _context.RolUsuarios.Remove(RolUsuario);
-                await _context.SaveChangesAsync();
+                var result = await _roleManager.DeleteAsync(role);
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    return OperationResult<IdentityRole>.Fallido($"Error al eliminar el rol: {errors}");
+                }
+                return OperationResult<IdentityRole>.Exitoso(role);
+            }
+            catch (Exception ex) 
+            {
+                return OperationResult<IdentityRole>.Fallido($"Error al eliminar el rol: {ex.Message}");
+            }
+        }
 
-                result.Success = true;
-                result.Message = "Rol de Uusario eliminado exitosamente.";
-                result.Data = RolUsuario;
+        public async Task<OperationResult<IEnumerable<IdentityRole>>> GetAllRolUsuariosAsync()
+        {
+            try
+            {
+                var roles = await _roleManager.Roles.ToListAsync();
+                return OperationResult<IEnumerable<IdentityRole>>.Exitoso(roles);
+            }
+            catch (Exception ex) 
+            {
+                return OperationResult<IEnumerable<IdentityRole>>.Fallido($"Error obteniendo los roles: {ex.Message}");
+            }
+        }
+
+        public async Task<OperationResult<IdentityRole>> GetRolUsuarioByIdAsync(string id)
+        {
+            try
+            {
+                var role = await _roleManager.FindByIdAsync(id);
+                if (role == null)
+                {
+                    return OperationResult<IdentityRole>.Fallido("Rol no encontrado.");
+                }
+                return OperationResult<IdentityRole>.Exitoso(role);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<IdentityRole>.Fallido($"Error al obtener el rol: {ex.Message}");
+            }
+        }
+
+        public async Task<OperationResult<IdentityRole>> UpdateRolUsuarioAsync(IdentityRole rolUsuario)
+        {
+            try
+            {
+                var existingRole = await _roleManager.FindByIdAsync(rolUsuario.Id);
+                if (existingRole == null)
+                {
+                    return OperationResult<IdentityRole>.Fallido("Rol no encontrado.");
+                }
                 
-            }
-            catch (Exception ex) 
-            {
-                result.Success = false;
-                result.Message = $"Error al eliminar el Rol del Usuario: {ex.Message}";
-                result.Data = null;
-            }
-            return result;
-        }
-
-        public async Task<OperationResult<IEnumerable<RolUsuario>>> GetAllRolUsuariosAsync()
-        {
-            OperationResult<IEnumerable<RolUsuario>> result = new OperationResult<IEnumerable<RolUsuario>>();
-
-            try
-            {
-                var RolUsuario = await _context.RolUsuarios.ToListAsync();
-
-                result.Success = true;
-                result.Message = "Roles de los  Usuarios obtenidos exitosamente.";
-                result.Data = RolUsuario;
-            }
-            catch (Exception ex) 
-            {
-                result.Success = false;
-                result.Message = $"Error obteniendo los Roles de los Usuarios: {ex.Message}";
-                result.Data = null;
-            }
-            return result;
-        }
-
-        public async Task<OperationResult<RolUsuario>> GetRolUsuarioByIdAsync(int id)
-        {
-            OperationResult<RolUsuario> result = new OperationResult<RolUsuario>();
-
-            try
-            {
-                var RolUsuario = await _context.RolUsuarios.FindAsync(id);
-                if (RolUsuario == null)
+                existingRole.Name = rolUsuario.Name;
+                var result = await _roleManager.UpdateAsync(existingRole);
+                if (!result.Succeeded)
                 {
-                    result.Success = false;
-                    result.Message = "Rolde Usuario no encontrado.";
-                    result.Data = null;
-                    return result;
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    return OperationResult<IdentityRole>.Fallido($"Error al actualizar el rol: {errors}");
                 }
-
-                result.Success = true;
-                result.Message = "Rol de Usuario obtenido exitosamente.";
-                result.Data = RolUsuario;
+                return OperationResult<IdentityRole>.Exitoso(existingRole);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error al obtener el Rol del Usuario: {ex.Message}";
-                result.Data = null;
+                return OperationResult<IdentityRole>.Fallido($"Error al actualizar el rol: {ex.Message}");
             }
-            return result;
-        }
-
-        public async Task<OperationResult<RolUsuario>> UpdateRolUsuarioAsync(RolUsuario rolUsuario)
-        {
-            OperationResult<RolUsuario> result = new OperationResult<RolUsuario>();
-
-            try
-            {
-                var existingUsuario = await _context.RolUsuarios.FindAsync(rolUsuario.Id);
-                if (existingUsuario == null)
-                {
-                    result.Success = false;
-                    result.Message = "Rol del Usuario no encontrado.";
-                    result.Data = null;
-                    return result;
-                }
-                existingUsuario.Nombre = rolUsuario.Nombre;
-
-                _context.RolUsuarios.Update(existingUsuario);
-                await _context.SaveChangesAsync();
-
-                result.Success = true;
-                result.Message = "Rol del Usuario actualizado exitosamente.";
-                result.Data = existingUsuario;
-            }
-            catch (Exception ex)
-            {
-                result.Success = false;
-                result.Message = $"Error al actualizar el Rol del Usuario: {ex.Message}";
-                result.Data = null;
-            }
-            return result;
         }
     }
 }

@@ -1,13 +1,13 @@
-using EmpanadasProject.Data.Entities.Pedidos;
-using EmpanadasProject.Data.OperationResult;
+using EmpanadasProject.Data.Entities;
+using EmpanadasProject.Data.Base;
 
 namespace EmpanadasProject.Data.Interfaces.Pedidos
 {
     public interface IProductoEnPedidoService
     {
-        public Task<OperationResult<ProductoEnPedido>> AddProductoEnPedidoAsync(ProductoEnPedido productoEnPedido);
-        public Task<OperationResult<ProductoEnPedido>> GetProductoEnPedidoByIdAsync(int id);
-        public Task<OperationResult<IEnumerable<ProductoEnPedido>>> GetProductosByPedidoIdAsync(int pedidoId);
-        public Task<OperationResult<ProductoEnPedido>> DeleteProductoEnPedidoAsync(int id);
+        public Task<OperationResult<ItemPedido>> AddProductoEnPedidoAsync(ItemPedido productoEnPedido);
+        public Task<OperationResult<ItemPedido>> GetProductoEnPedidoByIdAsync(int id);
+        public Task<OperationResult<IEnumerable<ItemPedido>>> GetProductosByPedidoIdAsync(int pedidoId);
+        public Task<OperationResult<ItemPedido>> DeleteProductoEnPedidoAsync(int id);
     }
 }

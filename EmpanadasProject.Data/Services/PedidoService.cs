@@ -1,147 +1,113 @@
-using EmpanadasProject.Data.Contexts;
-using EmpanadasProject.Data.Entities.Pedidos;
+using EmpanadasProject.Data.Context;
+using EmpanadasProject.Data.Entities;
 using EmpanadasProject.Data.Interfaces.Pedidos;
-using EmpanadasProject.Data.OperationResult;
+using EmpanadasProject.Data.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmpanadasProject.Data.Services
 {
     public class PedidoService : IPedidoService
     {
-        private readonly EmpanadasContext _context;
+        private readonly AppDbContext _context;
 
-        public PedidoService(EmpanadasContext context)
+        public PedidoService(AppDbContext context)
         {
             _context = context;
         }
 
         public async Task<OperationResult<Pedido>> AddPedidoAsync(Pedido pedido)
         {
-            OperationResult<Pedido> result = new OperationResult<Pedido>();
             try
             {
-                pedido.Fecha = DateTime.Now;
+                pedido.FechaPedido = DateTime.UtcNow;
                 _context.Pedidos.Add(pedido);
                 await _context.SaveChangesAsync();
-                result.Success = true;
-                result.Message = "Pedido agregado exitosamente.";
-                result.Data = pedido;
+                return OperationResult<Pedido>.Exitoso(pedido);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error al agregar el pedido: {ex.Message}";
-                result.Data = null;
+                return OperationResult<Pedido>.Fallido($"Error al agregar el pedido: {ex.Message}");
             }
-            return result;
         }
 
         public async Task<OperationResult<Pedido>> GetPedidoByIdAsync(int id)
         {
-            OperationResult<Pedido> result = new OperationResult<Pedido>();
             try
             {
-                var pedido = await _context.Pedidos.FindAsync(id);
+                var pedido = await _context.Pedidos
+                    .Include(p => p.Items)
+                    .Include(p => p.Historiales)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+                    
                 if (pedido == null)
                 {
-                    result.Success = false;
-                    result.Message = "Pedido no encontrado.";
-                    result.Data = null;
-                    return result;
+                    return OperationResult<Pedido>.Fallido("Pedido no encontrado.");
                 }
-                result.Success = true;
-                result.Message = "Pedido obtenido exitosamente.";
-                result.Data = pedido;
+                return OperationResult<Pedido>.Exitoso(pedido);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error al obtener el pedido: {ex.Message}";
-                result.Data = null;
+                return OperationResult<Pedido>.Fallido($"Error al obtener el pedido: {ex.Message}");
             }
-            return result;
         }
 
         public async Task<OperationResult<IEnumerable<Pedido>>> GetAllPedidosAsync()
         {
-            OperationResult<IEnumerable<Pedido>> result = new OperationResult<IEnumerable<Pedido>>();
             try
             {
                 var pedidos = await _context.Pedidos.ToListAsync();
-                result.Success = true;
-                result.Message = "Pedidos obtenidos exitosamente.";
-                result.Data = pedidos;
+                return OperationResult<IEnumerable<Pedido>>.Exitoso(pedidos);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error al obtener los pedidos: {ex.Message}";
-                result.Data = null;
+                return OperationResult<IEnumerable<Pedido>>.Fallido($"Error al obtener los pedidos: {ex.Message}");
             }
-            return result;
         }
 
         public async Task<OperationResult<Pedido>> UpdatePedidoAsync(Pedido pedido)
         {
-            OperationResult<Pedido> result = new OperationResult<Pedido>();
             try
             {
                 var existingPedido = await _context.Pedidos.FindAsync(pedido.Id);
                 if (existingPedido == null)
                 {
-                    result.Success = false;
-                    result.Message = "Pedido no encontrado.";
-                    result.Data = null;
-                    return result;
+                    return OperationResult<Pedido>.Fallido("Pedido no encontrado.");
                 }
-                existingPedido.ClienteId = pedido.ClienteId;
-                existingPedido.NegocioId = pedido.NegocioId;
-                existingPedido.MetodoDePagoId = pedido.MetodoDePagoId;
-                existingPedido.TotalPagado = pedido.TotalPagado;
+                
                 existingPedido.Estado = pedido.Estado;
-                existingPedido.PromocionId = pedido.PromocionId;
+                existingPedido.Total = pedido.Total;
+                existingPedido.Subtotal = pedido.Subtotal;
+                existingPedido.Impuestos = pedido.Impuestos;
+                existingPedido.MetodoEntrega = pedido.MetodoEntrega;
+                existingPedido.ActualizadoEn = DateTime.UtcNow;
 
                 _context.Pedidos.Update(existingPedido);
                 await _context.SaveChangesAsync();
-                result.Success = true;
-                result.Message = "Pedido actualizado exitosamente.";
-                result.Data = existingPedido;
+                return OperationResult<Pedido>.Exitoso(existingPedido);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error al actualizar el pedido: {ex.Message}";
-                result.Data = null;
+                return OperationResult<Pedido>.Fallido($"Error al actualizar el pedido: {ex.Message}");
             }
-            return result;
         }
 
         public async Task<OperationResult<Pedido>> DeletePedidoAsync(int id)
         {
-            OperationResult<Pedido> result = new OperationResult<Pedido>();
             try
             {
                 var pedido = await _context.Pedidos.FindAsync(id);
                 if (pedido == null)
                 {
-                    result.Success = false;
-                    result.Message = "Pedido no encontrado.";
-                    result.Data = null;
-                    return result;
+                    return OperationResult<Pedido>.Fallido("Pedido no encontrado.");
                 }
                 _context.Pedidos.Remove(pedido);
                 await _context.SaveChangesAsync();
-                result.Success = true;
-                result.Message = "Pedido eliminado exitosamente.";
-                result.Data = pedido;
+                return OperationResult<Pedido>.Exitoso(pedido);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error al eliminar el pedido: {ex.Message}";
-                result.Data = null;
+                return OperationResult<Pedido>.Fallido($"Error al eliminar el pedido: {ex.Message}");
             }
-            return result;
         }
     }
 }

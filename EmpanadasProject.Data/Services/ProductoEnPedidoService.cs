@@ -1,111 +1,81 @@
-using EmpanadasProject.Data.Contexts;
-using EmpanadasProject.Data.Entities.Pedidos;
+using EmpanadasProject.Data.Context;
+using EmpanadasProject.Data.Entities;
 using EmpanadasProject.Data.Interfaces.Pedidos;
-using EmpanadasProject.Data.OperationResult;
+using EmpanadasProject.Data.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmpanadasProject.Data.Services
 {
     public class ProductoEnPedidoService : IProductoEnPedidoService
     {
-        private readonly EmpanadasContext _context;
+        private readonly AppDbContext _context;
 
-        public ProductoEnPedidoService(EmpanadasContext context)
+        public ProductoEnPedidoService(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task<OperationResult<ProductoEnPedido>> AddProductoEnPedidoAsync(ProductoEnPedido productoEnPedido)
+        public async Task<OperationResult<ItemPedido>> AddProductoEnPedidoAsync(ItemPedido productoEnPedido)
         {
-            OperationResult<ProductoEnPedido> result = new OperationResult<ProductoEnPedido>();
             try
             {
-                _context.ProductoEnPedidos.Add(productoEnPedido);
+                _context.ItemsPedido.Add(productoEnPedido);
                 await _context.SaveChangesAsync();
-                result.Success = true;
-                result.Message = "Producto agregado al pedido exitosamente.";
-                result.Data = productoEnPedido;
+                return OperationResult<ItemPedido>.Exitoso(productoEnPedido);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error al agregar el producto al pedido: {ex.Message}";
-                result.Data = null;
+                return OperationResult<ItemPedido>.Fallido($"Error al agregar el producto al pedido: {ex.Message}");
             }
-            return result;
         }
 
-        public async Task<OperationResult<ProductoEnPedido>> GetProductoEnPedidoByIdAsync(int id)
+        public async Task<OperationResult<ItemPedido>> GetProductoEnPedidoByIdAsync(int id)
         {
-            OperationResult<ProductoEnPedido> result = new OperationResult<ProductoEnPedido>();
             try
             {
-                var productoEnPedido = await _context.ProductoEnPedidos.FindAsync(id);
+                var productoEnPedido = await _context.ItemsPedido.FindAsync(id);
                 if (productoEnPedido == null)
                 {
-                    result.Success = false;
-                    result.Message = "Producto en pedido no encontrado.";
-                    result.Data = null;
-                    return result;
+                    return OperationResult<ItemPedido>.Fallido("Producto en pedido no encontrado.");
                 }
-                result.Success = true;
-                result.Message = "Producto en pedido obtenido exitosamente.";
-                result.Data = productoEnPedido;
+                return OperationResult<ItemPedido>.Exitoso(productoEnPedido);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error al obtener el producto en pedido: {ex.Message}";
-                result.Data = null;
+                return OperationResult<ItemPedido>.Fallido($"Error al obtener el producto en pedido: {ex.Message}");
             }
-            return result;
         }
 
-        public async Task<OperationResult<IEnumerable<ProductoEnPedido>>> GetProductosByPedidoIdAsync(int pedidoId)
+        public async Task<OperationResult<IEnumerable<ItemPedido>>> GetProductosByPedidoIdAsync(int pedidoId)
         {
-            OperationResult<IEnumerable<ProductoEnPedido>> result = new OperationResult<IEnumerable<ProductoEnPedido>>();
             try
             {
-                var productos = await _context.ProductoEnPedidos.Where(p => p.PedidoId == pedidoId).ToListAsync();
-                result.Success = true;
-                result.Message = "Productos del pedido obtenidos exitosamente.";
-                result.Data = productos;
+                var productos = await _context.ItemsPedido.Where(p => p.PedidoId == pedidoId).ToListAsync();
+                return OperationResult<IEnumerable<ItemPedido>>.Exitoso(productos);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error al obtener los productos del pedido: {ex.Message}";
-                result.Data = null;
+                return OperationResult<IEnumerable<ItemPedido>>.Fallido($"Error al obtener los productos del pedido: {ex.Message}");
             }
-            return result;
         }
 
-        public async Task<OperationResult<ProductoEnPedido>> DeleteProductoEnPedidoAsync(int id)
+        public async Task<OperationResult<ItemPedido>> DeleteProductoEnPedidoAsync(int id)
         {
-            OperationResult<ProductoEnPedido> result = new OperationResult<ProductoEnPedido>();
             try
             {
-                var productoEnPedido = await _context.ProductoEnPedidos.FindAsync(id);
+                var productoEnPedido = await _context.ItemsPedido.FindAsync(id);
                 if (productoEnPedido == null)
                 {
-                    result.Success = false;
-                    result.Message = "Producto en pedido no encontrado.";
-                    result.Data = null;
-                    return result;
+                    return OperationResult<ItemPedido>.Fallido("Producto en pedido no encontrado.");
                 }
-                _context.ProductoEnPedidos.Remove(productoEnPedido);
+                _context.ItemsPedido.Remove(productoEnPedido);
                 await _context.SaveChangesAsync();
-                result.Success = true;
-                result.Message = "Producto en pedido eliminado exitosamente.";
-                result.Data = productoEnPedido;
+                return OperationResult<ItemPedido>.Exitoso(productoEnPedido);
             }
             catch (Exception ex)
             {
-                result.Success = false;
-                result.Message = $"Error al eliminar el producto en pedido: {ex.Message}";
-                result.Data = null;
+                return OperationResult<ItemPedido>.Fallido($"Error al eliminar el producto en pedido: {ex.Message}");
             }
-            return result;
         }
     }
 }

@@ -1,5 +1,5 @@
 using EmpanadasProject.Data.Entities;
-using EmpanadasProject.Data.OperationResult;
+using EmpanadasProject.Data.Base;
 
 namespace EmpanadasProject.Data.Interfaces
 {

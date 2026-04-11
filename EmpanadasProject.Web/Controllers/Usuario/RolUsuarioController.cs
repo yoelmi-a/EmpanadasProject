@@ -1,5 +1,6 @@
-﻿using EmpanadasProject.Data.Entities.Usuario;
 using EmpanadasProject.Data.Interfaces.Usuario;
+using EmpanadasProject.Data.Base;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmpanadasProject.Web.Controllers.Usuario
@@ -18,27 +19,27 @@ namespace EmpanadasProject.Web.Controllers.Usuario
         {
             var result = await _service.GetAllRolUsuariosAsync();
 
-            if (!result.Success) 
+            if (!result.EsExitoso) 
             {
-                ViewBag.ErrorMessage = result.Message;
+                ViewBag.ErrorMessage = result.MensajeError;
                 return View(); 
             }
 
-            return View();
+            return View(result.Valor);
         }
 
         // GET: RolUsuarioController/Details/5
-        public async Task<ActionResult> Details(int id)
+        public async Task<ActionResult> Details(string id)
         {
             var result = await _service.GetRolUsuarioByIdAsync(id);
 
-            if (!result.Success) 
+            if (!result.EsExitoso) 
             {
-                ViewBag.ErrorMessage = result.Message;
+                ViewBag.ErrorMessage = result.MensajeError;
                 return View();
             }
 
-            return View();
+            return View(result.Valor);
         }
 
         // GET: RolUsuarioController/Create
@@ -50,15 +51,15 @@ namespace EmpanadasProject.Web.Controllers.Usuario
         // POST: RolUsuarioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(RolUsuario rolUsuario)
+        public async Task<ActionResult> Create(IdentityRole rolUsuario)
         {
             try
             {
                 var result = await _service.AddRolUsuarioAsync(rolUsuario);
 
-                if (!result.Success) 
+                if (!result.EsExitoso) 
                 {
-                    ViewBag.ErrorMessage = result.Message;
+                    ViewBag.ErrorMessage = result.MensajeError;
                     return View(rolUsuario);
                 }
 
@@ -71,31 +72,31 @@ namespace EmpanadasProject.Web.Controllers.Usuario
         }
 
         // GET: RolUsuarioController/Edit/5
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit(string id)
         {
             var result = await _service.GetRolUsuarioByIdAsync(id);
 
-            if (!result.Success) 
+            if (!result.EsExitoso) 
             {
-                ViewBag.ErrorMessage = result.Message;
+                ViewBag.ErrorMessage = result.MensajeError;
                 return View();
             }
 
-            return View(result.Data);
+            return View(result.Valor);
         }
 
         // POST: RolUsuarioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(RolUsuario rolUsuario)
+        public async Task<ActionResult> Edit(IdentityRole rolUsuario)
         {
             try
             {
                 var result = await _service.UpdateRolUsuarioAsync(rolUsuario);
 
-                if (!result.Success) 
+                if (!result.EsExitoso) 
                 {
-                    ViewBag.ErrorMessage = result.Message;
+                    ViewBag.ErrorMessage = result.MensajeError;
                     return View(rolUsuario);
                 }
 
@@ -108,31 +109,31 @@ namespace EmpanadasProject.Web.Controllers.Usuario
         }
 
         // GET: RolUsuarioController/Delete/5
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
             var result = await _service.GetRolUsuarioByIdAsync(id);
 
-            if (!result.Success) 
+            if (!result.EsExitoso) 
             {
-                ViewBag.ErrorMessage = result.Message;
+                ViewBag.ErrorMessage = result.MensajeError;
                 return View();
             }
 
-            return View(result.Data);
+            return View(result.Valor);
         }
 
         // POST: RolUsuarioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Desactivar(int id)
+        public async Task<ActionResult> ConfirmarEliminar(string id)
         {
             try
             {
                 var result = await _service.DeleteRolUsuarioAsync(id);
 
-                if (!result.Success) 
+                if (!result.EsExitoso) 
                 {
-                    ViewBag.ErrorMessage = result.Message;
+                    ViewBag.ErrorMessage = result.MensajeError;
                     return View();
                 }
 

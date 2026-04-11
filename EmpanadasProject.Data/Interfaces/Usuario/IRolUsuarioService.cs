@@ -1,14 +1,15 @@
-﻿using EmpanadasProject.Data.Entities.Usuario;
-using EmpanadasProject.Data.OperationResult;
+﻿using EmpanadasProject.Data.Entities;
+using EmpanadasProject.Data.Base;
+using Microsoft.AspNetCore.Identity;
 
 namespace EmpanadasProject.Data.Interfaces.Usuario
 {
     public interface IRolUsuarioService
     {
-        public Task<OperationResult<RolUsuario>> AddRolUsuarioAsync(RolUsuario rolUsuario);
-        public Task<OperationResult<RolUsuario>> GetRolUsuarioByIdAsync(int id);
-        public Task<OperationResult<IEnumerable<RolUsuario>>> GetAllRolUsuariosAsync();
-        public Task<OperationResult<RolUsuario>> UpdateRolUsuarioAsync(RolUsuario rolUsuario);
-        public Task<OperationResult<RolUsuario>> DeleteRolUsuarioAsync(int id);
+        public Task<OperationResult<IdentityRole>> AddRolUsuarioAsync(IdentityRole rolUsuario);
+        public Task<OperationResult<IdentityRole>> GetRolUsuarioByIdAsync(string id);
+        public Task<OperationResult<IEnumerable<IdentityRole>>> GetAllRolUsuariosAsync();
+        public Task<OperationResult<IdentityRole>> UpdateRolUsuarioAsync(IdentityRole rolUsuario);
+        public Task<OperationResult<IdentityRole>> DeleteRolUsuarioAsync(string id);
     }
 }
